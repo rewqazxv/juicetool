@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Juice Tool</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            width: 100%;
+            max-width: 330px;
+            padding: 15px;
+            margin: auto;
+        }
+
+        img {
+            width: 100%;
+            padding: 15px;
+        }
+
+        .card {
+            padding: 15px;
+        }
+
+        button {
+            position: absolute;
+            top: 50%;
+            transform: translate(0, -50%);
+        }
+
+        #card1 {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+            margin-bottom: -1px;
+        }
+
+        #card2 {
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+        #card3 {
+            margin-top: 5px;
+            background-color: #f7f7f9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img src="https://fruitbatfactory.com/100orange/img/100%25_Orange_Juice-Logo.png">
+        <div id="card1" class="card">
+            <div class="row">
+                <div class="col">
+                    <label for="def">DEF</label>
+                    <input type="number" class="form-control" id="def">
+                </div>
+                <div class="col">
+                    <label for="evd">EVD</label>
+                    <input type="number" class="form-control" id="evd">
+                </div>
+            </div>
+        </div>
+        <div id="card2" class="card">
+            <div class="row">
+                <div class="col">
+                    <label for="hp">HP</label>
+                    <input type="number" class="form-control" id="hp">
+                </div>
+                <div class="col">
+                    <label for="atked">Attacked</label>
+                    <input type="number" class="form-control" id="atked">
+                </div>
+                <div class="col">
+                    <button type="button" class="btn btn-primary" onclick="calc()">计算</button>
+                </div>
+            </div>
+        </div>
+        <div id="card3" class="card" style="display: none;">
+            <div class="row">
+                <div class="col">
+                    <div id="show"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.0/jquery.slim.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).on('keyup', function (e) {
+            if (e.which == 13) {
+                calc();
+            }
+        });
+
+        for (i of ['#def', '#evd', '#hp', '#atked']) {
+            $(i).on("change paste keypress", function () {
+                if (calc()===false) $("#card3").hide()
+            })
+        }
+
+        function del(s) {
+            return `<del>${s}</del>`
+        }
+
+        function calc() {
+            def = parseInt($("#def").val()) || 0
+            evd = parseInt($("#evd").val()) || 0
+            hp = parseInt($("#hp").val()) || 0
+            atked = parseInt($("#atked").val()) || 0
+
+            if (atked <= 0) return false
+
+            e = atked + 1 - evd
+            d = atked + 1 - hp - def
+            ep = e <= 6 ? ((7 - e) / 6 * 100) : 0
+            ep = e >= 1 ? ep : 1
+            dp = d <= 6 ? ((7 - d) / 6 * 100) : 0
+            dp = d >= 1 ? dp : 1
+
+            res = ''
+            if (hp <= 0) {
+                res = '您还活着？'
+            } else {
+                if (e <= 1) {
+                    res += "EVD：100%"
+                } else {
+                    if (e > 6) res += del(`EVD：至少 ${e} ，存活概率：${ep.toFixed(0)}%<br>`)
+                    else res += `EVD：至少 ${e} ，存活概率：${ep.toFixed(0)}%<br>`
+
+                    if (hp <= 1) res += "DEF：别了吧<br>"
+                    else if (d <= 1) res += "DEF：100%<br>"
+                    else if (d > 6) res += del(`DEF：至少 ${d} ，存活概率：${dp.toFixed(0)}%<br>`)
+                    else res += `DEF：至少 ${d} ，存活概率：${dp.toFixed(0)}%<br>`
+
+                    if (res === '')
+                        res = "再会<br>"
+                }
+            }
+
+            $('#show').html(res)
+            $('#card3').show()
+            return true
+        }
+    </script>
+</body>
+
+</html>
